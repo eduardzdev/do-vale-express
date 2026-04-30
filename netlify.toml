@@ -9,3 +9,24 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+# ── Cache Headers ─────────────────────────────────────────────
+# index.html: nunca cachear — garante que o browser sempre busque
+# a versão mais recente (que aponta para os bundles com hash correto)
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, no-cache, must-revalidate"
+
+# Assets com hash no nome (JS/CSS gerados pelo Vite): imutáveis,
+# pode cachear por 1 ano pois o nome muda a cada build
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Outros arquivos estáticos (favicons, imagens, etc.)
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
