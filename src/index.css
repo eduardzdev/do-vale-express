@@ -91,46 +91,175 @@ a { text-decoration: none; color: inherit; }
   overflow: hidden;
 }
 
-/* ── Mobile Header (hidden on desktop) ────────────────────── */
-.app__mobile-header {
-  display: none;
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  z-index: 400;
-  padding: 12px 16px;
-  background: linear-gradient(to bottom, rgba(15, 17, 23, 0.92) 0%, transparent 100%);
-  backdrop-filter: blur(8px);
+/* ── Mobile Header (legado — mantido mas não usado) ─────────── */
+.app__mobile-header { display: none; }
+
+/* ── Mobile Bottom Sheet ────────────────────────────────────── */
+.mobile-sheet {
+  display: none; /* mostrado apenas no @media mobile abaixo */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-surface);
+  border-radius: 22px 22px 0 0;
+  z-index: 500;
+  box-shadow: 0 -6px 40px rgba(0, 0, 0, 0.55);
+  flex-direction: column;
+  overflow: hidden;
+  /* transform controlado via JS inline */
+  will-change: transform;
+  /* Borda sutil no topo */
+  border-top: 1px solid var(--border-hover);
 }
 
-.app__mobile-brand {
+/* Área de arraste (inclui drag pill + header) */
+.mobile-sheet__handle-area {
+  padding: 10px 16px 12px;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  flex-shrink: 0;
+  touch-action: none; /* deixa os touch events passarem sem scroll */
+}
+.mobile-sheet__handle-area:active { cursor: grabbing; }
+
+/* Indicador de drag — a pílula cinza no topo */
+.mobile-sheet__drag-pill {
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border-hover);
+  margin: 0 auto 12px;
+  transition: background var(--transition);
+}
+.mobile-sheet__handle-area:active .mobile-sheet__drag-pill {
+  background: var(--primary);
+}
+
+/* Linha com brand + ações */
+.mobile-sheet__header-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  gap: 12px;
 }
 
-.app__mobile-icon {
-  font-size: 22px;
-  width: 40px;
-  height: 40px;
-  background: var(--primary-glow);
-  border: 1px solid var(--primary);
-  border-radius: 12px;
+.mobile-sheet__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.mobile-sheet__avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  border: 2px solid var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-glow);
+}
+.mobile-sheet__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.app__mobile-name {
-  display: block;
-  font-weight: 700;
+.mobile-sheet__brand-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.mobile-sheet__brand-name {
   font-size: 15px;
+  font-weight: 800;
   color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mobile-sheet__brand-sub {
+  font-size: 11px;
+  color: var(--primary);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.app__mobile-subtitle {
-  display: block;
-  font-size: 11px;
+/* Grupo de ações à direita */
+.mobile-sheet__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.mobile-sheet__admin-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+.mobile-sheet__admin-btn:hover {
+  background: var(--primary-glow);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.mobile-sheet__chevron {
   color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.mobile-sheet__chevron--up {
+  transform: rotate(180deg);
+}
+
+/* Área de conteúdo — scrollável */
+.mobile-sheet__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  /* Scrollbar fina */
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-hover) transparent;
+}
+.mobile-sheet__body::-webkit-scrollbar { width: 4px; }
+.mobile-sheet__body::-webkit-scrollbar-thumb {
+  background: var(--border-hover);
+  border-radius: 2px;
+}
+
+/* Separador topo do body */
+.mobile-sheet__body::before {
+  content: '';
+  display: block;
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 4px;
+}
+
+/* Ocultar admin-fab no mobile */
+@media (max-width: 768px) {
+  .admin-fab--desktop { display: none !important; }
 }
 
 /* ── Info Panel ────────────────────────────────────────────── */
@@ -1418,4 +1547,34 @@ a { text-decoration: none; color: inherit; }
   padding: 6px 8px !important;
   text-align: center;
   flex-shrink: 0;
+}
+
+/* ── Responsive — Mobile (≤ 768px) ──────────────────────────── */
+@media (max-width: 768px) {
+  /* Ativa o bottom sheet */
+  .mobile-sheet { display: flex; }
+
+  /* Esconde a sidebar desktop */
+  .app__sidebar { display: none; }
+
+  /* Mapa ocupa tela toda */
+  .app__map { width: 100%; }
+
+  /* Esconde o FAB de admin desktop */
+  .admin-fab--desktop { display: none !important; }
+
+  /* WhatsApp FAB: sobe pra não ficar atrás do sheet */
+  .whatsapp-btn {
+    bottom: 88px;
+  }
+
+  /* Price card: centraliza na tela */
+  .price-card {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    min-width: 280px;
+    max-width: calc(100vw - 32px);
+    bottom: 88px;
+  }
 }

@@ -6,6 +6,7 @@ import MapView from './components/Map/MapView';
 import PriceCard from './components/UI/PriceCard';
 import WhatsAppButton from './components/UI/WhatsAppButton';
 import InfoPanel from './components/UI/InfoPanel';
+import MobileBottomSheet from './components/UI/MobileBottomSheet';
 import LoadingScreen from './components/UI/LoadingScreen';
 import AdminPage from './admin/AdminPage';
 import { Settings } from 'lucide-react';
@@ -20,7 +21,7 @@ function MapScreen() {
 
   return (
     <div className="app">
-      {/* Sidebar — desktop */}
+      {/* Sidebar — desktop only */}
       <aside className="app__sidebar">
         <InfoPanel config={config} totalZones={activeZones.length} />
       </aside>
@@ -35,17 +36,6 @@ function MapScreen() {
           />
         </Suspense>
 
-        {/* Header mobile */}
-        <div className="app__mobile-header">
-          <div className="app__mobile-brand">
-            <span className="app__mobile-icon">🏍️</span>
-            <div>
-              <span className="app__mobile-name">{config.motoboy.name}</span>
-              <span className="app__mobile-subtitle">Tele Expressa</span>
-            </div>
-          </div>
-        </div>
-
         {/* Price Card */}
         {selectedZone && (
           <PriceCard
@@ -58,9 +48,9 @@ function MapScreen() {
         {/* FAB WhatsApp */}
         <WhatsAppButton config={config} />
 
-        {/* Admin access button */}
+        {/* Admin FAB — desktop only; mobile usa botão dentro do MobileBottomSheet */}
         <button
-          className="admin-fab"
+          className="admin-fab admin-fab--desktop"
           onClick={() => navigate('/admin')}
           title="Painel Admin"
           id="open-admin-fab"
@@ -68,6 +58,13 @@ function MapScreen() {
           <Settings size={18} />
         </button>
       </main>
+
+      {/* Bottom Sheet — mobile only */}
+      <MobileBottomSheet
+        config={config}
+        totalZones={activeZones.length}
+        onAdminClick={() => navigate('/admin')}
+      />
     </div>
   );
 }
