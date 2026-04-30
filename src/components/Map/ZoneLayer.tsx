@@ -25,7 +25,7 @@ export default function ZoneLayer({ zones, selectedZoneId, onZoneClick }: ZoneLa
         const isSelected = zone.id === selectedZoneId;
 
         const circle = L.circle(zone.center, {
-          radius: 8000,
+          radius: zone.radiusMeters ?? 4000,
           color: zone.color,
           fillColor: zone.color,
           fillOpacity: isSelected ? 0.22 : 0.1,
@@ -43,7 +43,7 @@ export default function ZoneLayer({ zones, selectedZoneId, onZoneClick }: ZoneLa
     const originZone = zones.find((z) => z.isOrigin);
     if (originZone) {
       const originCircle = L.circle(originZone.center, {
-        radius: 5000,
+        radius: originZone.radiusMeters ?? 2500,
         color: originZone.color,
         fillColor: originZone.color,
         fillOpacity: 0.12,

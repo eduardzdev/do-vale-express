@@ -26,6 +26,7 @@ export interface DeliveryZone {
   geojsonFile?: string;     // Nome do arquivo GeoJSON para colorir área
   etaMinutes?: number;      // Tempo estimado de entrega
   notes?: string;           // Observações (ex: "Somente até 18h")
+  radiusMeters?: number;    // Raio do círculo colorido no mapa (metros, padrão: 4000)
   active: boolean;          // Zona ativa/desativada
 }
 

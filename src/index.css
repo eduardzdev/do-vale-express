@@ -1377,3 +1377,45 @@ a { text-decoration: none; color: inherit; }
   .admin__content { padding: 16px; }
 }
 
+/* ── Radius slider control ──────────────────────────────────── */
+.admin-radius-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.admin-radius-control__label {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.admin-radius-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border-hover);
+  outline: none;
+  cursor: pointer;
+  accent-color: var(--primary);
+}
+.admin-radius-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: pointer;
+  box-shadow: 0 0 0 3px var(--primary-glow);
+  transition: box-shadow var(--transition);
+}
+.admin-radius-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 0 5px var(--primary-glow);
+}
+.admin-radius-input {
+  width: 72px !important;
+  padding: 6px 8px !important;
+  text-align: center;
+  flex-shrink: 0;
+}

@@ -31,6 +31,7 @@ const EMPTY: DeliveryZone = {
   color: '#22c55e',
   etaMinutes: 60,
   notes: '',
+  radiusMeters: 4000,
   active: true,
 };
 
@@ -270,6 +271,42 @@ export default function ZoneModal({ zone, onSave, onClose }: Props) {
                   className="admin-color-input"
                 />
               </div>
+            </div>
+
+            {/* Raio do círculo */}
+            <div className="admin-form__field">
+              <label htmlFor="zone-radius">
+                Expansão da área colorida no mapa —{' '}
+                <strong style={{ color: 'var(--primary)' }}>
+                  {((form.radiusMeters ?? 4000) / 1000).toFixed(1)} km
+                </strong>
+              </label>
+              <div className="admin-radius-control">
+                <span className="admin-radius-control__label">500 m</span>
+                <input
+                  id="zone-radius"
+                  type="range"
+                  min={500}
+                  max={20000}
+                  step={500}
+                  value={form.radiusMeters ?? 4000}
+                  onChange={(e) => update('radiusMeters', parseInt(e.target.value))}
+                  className="admin-radius-slider"
+                />
+                <span className="admin-radius-control__label">20 km</span>
+                <input
+                  type="number"
+                  min={500}
+                  max={20000}
+                  step={500}
+                  value={form.radiusMeters ?? 4000}
+                  onChange={(e) => update('radiusMeters', parseInt(e.target.value) || 4000)}
+                  className="admin-radius-input"
+                  title="Raio em metros"
+                />
+                <span className="admin-radius-control__label">m</span>
+              </div>
+              <p className="admin-form__hint">Padrão: 4000 m (4 km). Cidades menores → valor menor; cidades grandes ou regiões → valor maior.</p>
             </div>
 
             {/* Extras */}
