@@ -1500,10 +1500,136 @@ a { text-decoration: none; color: inherit; }
   .admin-form__row--3 { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 640px) {
-  .admin { flex-direction: column; }
-  .admin__sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
-  .admin__nav { flex-direction: row; overflow-x: auto; }
-  .admin__content { padding: 16px; }
+  /* ── Layout: sidebar vira barra no topo ── */
+  .admin {
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+  .admin__sidebar {
+    width: 100%;
+    height: auto;
+    flex-shrink: 0;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding: 12px 0 0;
+    position: relative; /* necessário para o sidebar-footer absolutamente posicionado */
+  }
+
+  /* ── Brand row: logo + nome + botões compactos ── */
+  .admin__brand {
+    padding: 0 12px 12px;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  /* Empurra os botões pro final da brand row */
+  .admin__brand::after { content: none; }
+
+  /* Injeta os action buttons dentro do brand via flexbox truque:
+     escondemos o sidebar-footer e mostramos como parte do brand row */
+  .admin__sidebar-footer {
+    border-top: none;
+    padding: 0 4px 0 auto;
+    flex-direction: row;
+    gap: 4px;
+    margin-left: auto; /* empurra pra direita dentro do brand */
+    position: absolute;
+    right: 12px;
+    top: 14px;
+  }
+  .admin__action-btn {
+    width: auto; /* remove o width: 100% */
+    padding: 7px 10px;
+    font-size: 12px;
+    gap: 5px;
+    white-space: nowrap;
+  }
+  .admin__action-btn span { display: none; } /* só ícone em telas muito pequenas */
+
+  /* ── Nav: tabs horizontais compactas em pílula ── */
+  .admin__nav {
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 0 12px 12px;
+    gap: 6px;
+    scrollbar-width: none;
+  }
+  .admin__nav::-webkit-scrollbar { display: none; }
+  .admin__nav-item {
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding: 7px 14px;
+    font-size: 12px;
+    border-radius: var(--radius-full);
+    /* Remove width implícito */
+    width: auto;
+  }
+
+  /* ── Topbar: mantém row mas com wrap e padding menor ── */
+  .admin__topbar {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px 10px;
+  }
+  .admin__topbar > div:first-child { flex: 1; min-width: 0; }
+  .admin__topbar-title { font-size: 14px; }
+  .admin__topbar-sub { font-size: 11px; }
+  .admin__topbar-actions { flex-shrink: 0; }
+  .admin__save-btn {
+    padding: 7px 14px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  /* ── Content: padding menor, sem overflow ── */
+  .admin__content {
+    padding: 14px 12px;
+    overflow-x: hidden;
+  }
+
+  /* ── Todos os grids forçam 1 coluna ── */
+  .admin-form__row,
+  .admin-form__row--3 {
+    grid-template-columns: 1fr;
+  }
+
+  /* ── Cards: padding menor ── */
+  .admin-card { padding: 14px 12px; }
+
+  /* ── Swatches de cor: reduz tamanho ── */
+  .admin-color-preset { width: 26px; height: 26px; }
+  .admin-color-swatches { gap: 8px; }
+
+  /* ── Radius control: simplifica em mobile ── */
+  .admin-radius-control { flex-wrap: wrap; }
+  .admin-radius-input { width: 60px !important; }
+
+  /* ── Zone table: esconde colunas não essenciais ── */
+  .admin-table th:nth-child(3),
+  .admin-table td:nth-child(3),
+  .admin-table th:nth-child(7),
+  .admin-table td:nth-child(7) {
+    display: none;
+  }
+  .admin-table th,
+  .admin-table td {
+    padding: 10px 8px;
+    font-size: 12px;
+  }
+
+  /* ── Zones header: empilha ── */
+  .admin-zones-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .admin-zones-controls { flex-wrap: wrap; }
+  .admin-search { width: 100%; }
+  .admin-zones-controls .admin-btn--primary { width: 100%; justify-content: center; }
 }
 
 /* ── Radius slider control ──────────────────────────────────── */
