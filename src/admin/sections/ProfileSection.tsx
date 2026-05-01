@@ -4,6 +4,7 @@
 
 import { User, Phone, Clock, MapPin, Palette, MessageSquare, Image, RotateCcw } from 'lucide-react';
 import type { MotoboyConfig } from '../../types';
+import { useState } from 'react';
 interface Props {
   config: MotoboyConfig;
   setConfig: (c: MotoboyConfig) => void;
