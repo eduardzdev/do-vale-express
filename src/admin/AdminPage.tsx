@@ -1,5 +1,5 @@
 // ============================================================
-// Painel Admin — do Vale Express
+// Painel Admin — Mapa Express
 // Rota: /admin  (protegido por PIN)
 // ============================================================
 
@@ -67,7 +67,7 @@ export default function AdminPage() {
             <Lock size={28} />
           </div>
           <h1 className="admin-lock__title">Painel Admin</h1>
-          <p className="admin-lock__sub">do Vale Express</p>
+          <p className="admin-lock__sub">Mapa Express</p>
           <form onSubmit={handleLoginSubmit} className="admin-lock__form">
             <input
               type="email"
@@ -108,7 +108,7 @@ export default function AdminPage() {
             <Bike size={20} />
           </div>
           <div>
-            <span className="admin__brand-name">do Vale Express</span>
+            <span className="admin__brand-name">{config?.motoboy?.name || 'Mapa Express'}</span>
             <span className="admin__brand-sub">Painel Admin</span>
           </div>
         </div>
