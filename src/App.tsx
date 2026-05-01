@@ -1,5 +1,5 @@
 import { useState, Suspense } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, Navigate, useParams } from 'react-router-dom';
 import type { DeliveryZone } from './types';
 import { useConfig } from './hooks/useConfig';
 import MapView from './components/Map/MapView';
@@ -13,6 +13,7 @@ import { Settings } from 'lucide-react';
 
 // ── Map View ─────────────────────────────────────────────────
 function MapScreen() {
+  const { slug } = useParams();
   const { config } = useConfig();
   const [selectedZone, setSelectedZone] = useState<DeliveryZone | null>(null);
   const navigate = useNavigate();
@@ -51,7 +52,7 @@ function MapScreen() {
         {/* Admin FAB — desktop only; mobile usa botão dentro do MobileBottomSheet */}
         <button
           className="admin-fab admin-fab--desktop"
-          onClick={() => navigate('/admin')}
+          onClick={() => navigate(`/${slug}/admin`)}
           title="Painel Admin"
           id="open-admin-fab"
         >
@@ -63,7 +64,7 @@ function MapScreen() {
       <MobileBottomSheet
         config={config}
         totalZones={activeZones.length}
-        onAdminClick={() => navigate('/admin')}
+        onAdminClick={() => navigate(`/${slug}/admin`)}
       />
     </div>
   );
@@ -73,8 +74,10 @@ function MapScreen() {
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<MapScreen />} />
-      <Route path="/admin" element={<AdminPage />} />
+      <Route path="/" element={<Navigate to="/dovale" replace />} />
+      <Route path="/admin" element={<Navigate to="/dovale/admin" replace />} />
+      <Route path="/:slug" element={<MapScreen />} />
+      <Route path="/:slug/admin" element={<AdminPage />} />
     </Routes>
   );
 }

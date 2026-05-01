@@ -4,9 +4,11 @@
 // ============================================================
 
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Lock, Map, Settings, LogOut, Bike, ListOrdered } from 'lucide-react';
-import { useConfig, getAdminPin } from '../hooks/useConfig';
+import { useConfig } from '../hooks/useConfig';
+import { auth } from '../lib/firebase';
+import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import ProfileSection from './sections/ProfileSection';
 import ZonesSection from './sections/ZonesSection';
 
@@ -14,31 +16,44 @@ type Tab = 'profile' | 'zones';
 
 export default function AdminPage() {
   const navigate = useNavigate();
-  const { config, setConfig, resetToDefaults } = useConfig();
+  const { slug } = useParams();
+  const { config, updateConfig } = useConfig(slug);
 
   // ── Auth state ───────────────────────────────────────────
   const [authed, setAuthed] = useState(false);
-  const [pin, setPin] = useState('');
-  const [pinError, setPinError] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
 
   const [activeTab, setActiveTab] = useState<Tab>('profile');
   const [saved, setSaved] = useState(false);
 
-  // ── PIN Login ────────────────────────────────────────────
-  function handlePinSubmit(e: React.FormEvent) {
+  // ── Auth Listener ─────────────────────────────────────────
+  useState(() => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      setAuthed(!!user);
+    });
+    return unsubscribe;
+  });
+
+  // ── Login / Logout ────────────────────────────────────────
+  async function handleLoginSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (pin === getAdminPin()) {
-      setAuthed(true);
-      setPinError('');
-    } else {
-      setPinError('PIN incorreto. Tente novamente.');
-      setPin('');
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      setLoginError('');
+    } catch (err: any) {
+      setLoginError('Credenciais incorretas.');
+      console.error(err);
     }
   }
 
+  async function handleLogout() {
+    await signOut(auth);
+    setAuthed(false);
+  }
+
   function handleSave() {
-    // config is already saved on each change via setConfig,
-    // this just shows visual feedback
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   }
@@ -53,24 +68,31 @@ export default function AdminPage() {
           </div>
           <h1 className="admin-lock__title">Painel Admin</h1>
           <p className="admin-lock__sub">do Vale Express</p>
-          <form onSubmit={handlePinSubmit} className="admin-lock__form">
+          <form onSubmit={handleLoginSubmit} className="admin-lock__form">
             <input
-              type="password"
-              inputMode="numeric"
-              maxLength={8}
-              placeholder="Digite seu PIN"
-              value={pin}
-              onChange={(e) => setPin(e.target.value)}
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="admin-lock__input"
               autoFocus
-              id="admin-pin-input"
+              required
             />
-            {pinError && <p className="admin-lock__error">{pinError}</p>}
-            <button type="submit" className="admin-lock__btn" id="admin-pin-submit">
+            <input
+              type="password"
+              placeholder="Senha"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="admin-lock__input"
+              style={{ marginTop: 10 }}
+              required
+            />
+            {loginError && <p className="admin-lock__error">{loginError}</p>}
+            <button type="submit" className="admin-lock__btn">
               Entrar
             </button>
           </form>
-          <p className="admin-lock__hint">PIN padrão: 1234</p>
+          <p className="admin-lock__hint">Acesse com sua conta motoboy</p>
         </div>
       </div>
     );
@@ -113,7 +135,7 @@ export default function AdminPage() {
         <div className="admin__sidebar-footer">
           <button
             className="admin__action-btn admin__action-btn--secondary"
-            onClick={() => navigate('/')}
+            onClick={() => navigate(`/${slug}`)}
             id="admin-view-map"
           >
             <Map size={15} />
@@ -121,7 +143,7 @@ export default function AdminPage() {
           </button>
           <button
             className="admin__action-btn admin__action-btn--ghost"
-            onClick={() => setAuthed(false)}
+            onClick={handleLogout}
             id="admin-logout"
           >
             <LogOut size={15} />
@@ -156,10 +178,10 @@ export default function AdminPage() {
 
         <div className="admin__content">
           {activeTab === 'profile' && (
-            <ProfileSection config={config} setConfig={setConfig} onReset={resetToDefaults} />
+            <ProfileSection config={config} setConfig={(conf: any) => updateConfig(() => conf)} onReset={() => {}} />
           )}
           {activeTab === 'zones' && (
-            <ZonesSection config={config} setConfig={setConfig} />
+            <ZonesSection config={config} setConfig={(conf: any) => updateConfig(() => conf)} />
           )}
         </div>
       </main>

@@ -2,11 +2,8 @@
 // ProfileSection — edita perfil, tema, WhatsApp, cidade base
 // ============================================================
 
-import { useState } from 'react';
-import { User, Phone, Clock, MapPin, Palette, MessageSquare, Image, RotateCcw, Lock } from 'lucide-react';
+import { User, Phone, Clock, MapPin, Palette, MessageSquare, Image, RotateCcw } from 'lucide-react';
 import type { MotoboyConfig } from '../../types';
-import { getAdminPin, setAdminPin } from '../../hooks/useConfig';
-
 interface Props {
   config: MotoboyConfig;
   setConfig: (c: MotoboyConfig) => void;
@@ -27,9 +24,6 @@ const PRESET_COLORS = [
 ];
 
 export default function ProfileSection({ config, setConfig, onReset }: Props) {
-  const [newPin, setNewPin] = useState('');
-  const [pinConfirm, setPinConfirm] = useState('');
-  const [pinMsg, setPinMsg] = useState('');
   const [showReset, setShowReset] = useState(false);
 
   // ── Helpers ──────────────────────────────────────────────
@@ -47,22 +41,6 @@ export default function ProfileSection({ config, setConfig, onReset }: Props) {
     document.documentElement.style.setProperty('--primary', value);
   }
 
-  function handlePinChange(e: React.FormEvent) {
-    e.preventDefault();
-    if (newPin.length < 4) {
-      setPinMsg('O PIN deve ter pelo menos 4 caracteres.');
-      return;
-    }
-    if (newPin !== pinConfirm) {
-      setPinMsg('Os PINs não coincidem.');
-      return;
-    }
-    setAdminPin(newPin);
-    setPinMsg('✓ PIN alterado com sucesso!');
-    setNewPin('');
-    setPinConfirm('');
-    setTimeout(() => setPinMsg(''), 3000);
-  }
 
   function handleReset() {
     onReset();
@@ -310,49 +288,6 @@ export default function ProfileSection({ config, setConfig, onReset }: Props) {
         </div>
       </div>
 
-      {/* ── Segurança (PIN) ───────────────────────────────── */}
-      <div className="admin-card">
-        <div className="admin-card__header">
-          <Lock size={16} />
-          <h3>Segurança — Alterar PIN de acesso</h3>
-        </div>
-        <form className="admin-form" onSubmit={handlePinChange}>
-          <div className="admin-form__row">
-            <div className="admin-form__field">
-              <label htmlFor="pin-new">Novo PIN</label>
-              <input
-                id="pin-new"
-                type="password"
-                inputMode="numeric"
-                maxLength={8}
-                value={newPin}
-                onChange={(e) => setNewPin(e.target.value)}
-                placeholder="Mínimo 4 caracteres"
-              />
-            </div>
-            <div className="admin-form__field">
-              <label htmlFor="pin-confirm">Confirmar PIN</label>
-              <input
-                id="pin-confirm"
-                type="password"
-                inputMode="numeric"
-                maxLength={8}
-                value={pinConfirm}
-                onChange={(e) => setPinConfirm(e.target.value)}
-                placeholder="Repita o PIN"
-              />
-            </div>
-          </div>
-          {pinMsg && (
-            <p className={`admin-form__msg ${pinMsg.startsWith('✓') ? 'admin-form__msg--ok' : 'admin-form__msg--err'}`}>
-              {pinMsg}
-            </p>
-          )}
-          <button type="submit" className="admin-btn admin-btn--secondary" id="change-pin-btn">
-            Alterar PIN
-          </button>
-        </form>
-      </div>
 
       {/* ── Reset ─────────────────────────────────────────── */}
       <div className="admin-card admin-card--danger">
