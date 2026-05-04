@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/mapa-express/sw.js', { scope: '/mapa-express/' })})}
